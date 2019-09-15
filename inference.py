@@ -122,7 +122,19 @@ class Inference():
 		Args:
 			img : Input Image -shape=(256x256x3) -value= uint8 (in [0, 255])
 		"""
-		return self.predict.pred(self, img / 255, debug = False, sess = None)
+		hg = self.predict.pred(img = img/255, debug = False, sess = None)
+		hm = np.sum(hg[0], axis = 2)
+		hm = np.repeat(np.expand_dims(hm, axis = 2), 3, axis = 2)
+		hm = cv2.resize(hm, (256,256))
+		hm = (img / 255) + hm*500
+		r,g,b = cv2.split(hm)
+		b = np.zeros(shape = b.shape)
+		g = np.zeros(shape = g.shape)
+		hm = cv2.merge([r,g,b])
+		img = img + hm
+		img = img.astype('float32')
+		return img
+
 	# ------------------------- Joint Prediction -------------------------------
 	
 	def predictJoints(self, img, mode = 'cpu', thresh = 0.2):
@@ -150,6 +162,16 @@ class Inference():
 		else:
 			print('Error : Input is not a RGB image nor a batch of RGB images')
 	
+
+	# ----------------------------- Plot Skeleton ------------------------------
+	
+	def pltBoundingBoxes(self, img, nms_thresh = 0.5):
+		""" Return an image with plotted bounding boxes
+		Args:
+			img : Input Image -shape=(256x256x3) -value= uint8 (in [0, 255]) 
+			nms_thresh	: Non Maxima Suppression Threshold
+		"""
+		return self.predict.pltBoundingBoxes(img, nms_thresh = 0.5, tocopy = True)
 	# ----------------------------- Plot Skeleton ------------------------------
 	
 	def pltSkeleton(self, img, thresh, pltJ, pltL):

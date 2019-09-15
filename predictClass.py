@@ -343,7 +343,6 @@ class PredictProcessor():
 			print('Pred: ', time() - t, ' sec.')
 		return out
 	
-	
 	#-------------------------------PLOT FUNCTION------------------------------
 	def plt_skeleton(self, img, tocopy = True, debug = False, sess = None):
 		""" Given an Image, returns Image with plotted limbs (TF VERSION)
@@ -390,6 +389,43 @@ class PredictProcessor():
 		if tocopy:
 			return img
 		
+	def pltBoundingBoxes(self, img, nms_thresh = 0.5, tocopy = True):
+		""" Plot bounding boxes on Image (Single Detection)
+		Args:
+			img			: Input Image ( RGB IMAGE 256x256x3)
+			nms_thresh	: Non Maxima Suppression Threshold
+			tocopy		: (bool) Plot on imput image or return a copy
+		Returns:
+			img			: Copy of input image if 'tocopy'
+		"""
+		if tocopy:
+			img = np.copy(img)
+		WIDTH = img.shape[1]
+		HEIGHT = img.shape[0]
+		XC = WIDTH // 2
+		YC = HEIGHT // 2
+		img_square = np.copy(img[:,XC - HEIGHT //2:XC + HEIGHT //2])
+		img_od = cv2.cvtColor(np.copy(img_square), cv2.COLOR_BGR2RGB)
+		shapeOd = img_od.shape
+		results = self.detect(img_od)
+		results_person = []
+		for i in range(len(results)):
+			if results[i][0] == 'person':
+				results_person.append(results[i])
+		results_person = self.nms(results_person, nms_thresh)
+		for box in results_person:
+			class_name = box[0]
+			x = int(box[1])
+			y = int(box[2])
+			w = int(box[3] / 2)
+			h = int(box[4] / 2)
+			prob = box[5]
+			bbox = np.asarray((max(0,x-w), max(0, y-h), min(shapeOd[1]-1, x+w), min(shapeOd[0]-1, y+h)))
+			cv2.rectangle(img_square, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (0, 255, 0), 2)
+			cv2.rectangle(img_square, (bbox[0], bbox[1] - 20),(bbox[2], bbox[1]), (125, 125, 125), -1)
+			cv2.putText(img_square, class_name + ' : %.2f' % prob, (bbox[0] + 5, bbox[1] - 7), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
+			return img_square
+	
 	def pltSkeleton(self, img, thresh = 0.2, pltJ = True, pltL = True, tocopy = True, norm = True):
 		""" Plot skeleton on Image (Single Detection)
 		Args:
@@ -563,8 +599,6 @@ class PredictProcessor():
 		cv2.destroyAllWindows()
 		cam.release()
 
-	
-	
 	def _singleDetection(self, plt_j = True, plt_l = True):
 		""" /!\/!\DO NOT USE THIS FUNCTION/!\/!\
 		/!\/!\METHOD FOR TEST PURPOSES ONLY/!\/!\
@@ -606,8 +640,7 @@ class PredictProcessor():
 				break
 		cv2.destroyAllWindows()
 		cam.release()
-			
-			
+						
 	def hpeWebcam(self, thresh = 0.6, plt_j = True, plt_l = True, plt_hm = False, debug = True):
 		""" Single Person Detector
 		Args:
