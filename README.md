@@ -1,7 +1,8 @@
 # Stacked Hourglass model : TensorFlow implementation
 Tensorflow implementation of Stacked Hourglass Networks for Human Pose Estimation by A.Newell et al.
 
-Code as part of MSc Computing Individual Project (Imperial College London 2017)
+Modified [code](https://github.com/wbenbihi/hourglasstensorlfow) com Walid Benbihi for a demo in pose estimation.
+
 ## Based on
 [Stacked Hourglass Networks for Human Pose Estimation](https://arxiv.org/abs/1603.06937) -- A.Newell et al. 
 
@@ -112,6 +113,3 @@ On our testing set we achieve 90 % accuracy on the PCKh metric for the best mode
 Filter's features are added, find out how it works by yourselves. (/!\ We are not responsible of the weird pose you are going to take).
 
 Run Inference.runVideoFilter(args) to check it out.
-
-## Greetings
-A special thanks to A.Newell for his answers. And to [bhack](https://github.com/bhack) for his feedback.
