@@ -49,7 +49,7 @@ img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
 # Caso a imagem não seja do tamanho 256x256, redimensionar.
 if img.shape != (256,256,3):
-    print('resized!')
+    print('Wrong shape. Resizing.')
     img = cv2.resize(img, (256,256))
 
 # Mostrando as dimensões, deve ser (256X256X3) == (alturaXlarguraXnumero_de_canais_de_cor)

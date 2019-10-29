@@ -177,7 +177,7 @@ class Inference():
 	def pltSkeleton(self, img, thresh, pltJ, pltL):
 		""" Return an image with plotted joints and limbs
 		Args:
-			img : Input Image -shape=(256x256x3) -value= uint8 (in [0, 255]) 
+			img : Input Image -shape=(256x256x3) RGB -value= uint8 (in [0, 255]) RGB
 			thresh: Joint Threshold
 			pltJ: (bool) True to plot joints
 			pltL: (bool) True to plot limbs
